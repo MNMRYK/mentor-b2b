@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estrategia High-Ticket | Mentoría de Negocios</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Plus Jakarta Sans (Súper premium geométrica para B2B) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- PARTE CSS: CONFIGURACIÓN TAILWIND -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            white: '#FFFFFF',
+                            pearl: '#F8FAFC',
+                            navy: '#0F172A',      /* Azul marino profundo corporativo */
+                            navyLight: '#1E293B', 
+                            gold: '#B45309',      /* Bronce/Dorado oscuro elegante */
+                            goldLight: '#D97706',
+                            black: '#020617',     /* Texto oscuro */
+                        }
+                    },
+                    boxShadow: {
+                        'premium': '0 20px 40px -15px rgba(15, 23, 42, 0.15)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- PARTE CSS: ESTILOS NATIVOS Y ANIMACIONES -->
+    <style>
+        body {
+            background-color: #FFFFFF;
+            color: #020617;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Scrollbar premium */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #F8FAFC; }
+        ::-webkit-scrollbar-thumb { background: #0F172A; border-radius: 4px; }
+
+        /* Lógica SPA: Mostrar/Ocultar pestañas */
+        .tab-content {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .tab-content.active {
+            display: block;
+            opacity: 1;
+            animation: fadeUp 0.4s ease-out forwards;
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Estilo Enlaces de Navegación Activos */
+        .nav-link.active {
+            color: #0F172A;
+            font-weight: 700;
+        }
+        .nav-link.active::after {
+            content: '';
+            display: block;
+            width: 100%;
+            height: 2px;
+            background-color: #B45309; /* Subrayado dorado */
+            margin-top: 4px;
+            border-radius: 2px;
+        }
+
+        /* Filtro de Academia Activo */
+        .filter-btn.active {
+            background-color: #0F172A;
+            color: #FFFFFF;
+            border-color: #0F172A;
+        }
+
+        /* Estilización del Input Range (Calculadora ROI) */
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 24px;
+            width: 24px;
+            border-radius: 50%;
+            background: #B45309;
+            cursor: pointer;
+            margin-top: -10px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border: 2px solid #FFFFFF;
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 6px;
+            cursor: pointer;
+            background: #E2E8F0;
+            border-radius: 4px;
+        }
+        
+        /* Animación Barra Progreso VIP */
+        #vip-progress-bar {
+            transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Efecto VSL Play Button */
+        .play-btn-glow {
+            box-shadow: 0 0 20px rgba(180, 83, 9, 0.4);
+            animation: pulse-gold 2s infinite;
+        }
+        @keyframes pulse-gold {
+            0% { box-shadow: 0 0 0 0 rgba(180, 83, 9, 0.6); }
+            70% { box-shadow: 0 0 0 15px rgba(180, 83, 9, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(180, 83, 9, 0); }
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen overflow-x-hidden">
+
+    <!-- PARTE HTML: NAVEGACIÓN -->
+    <nav class="sticky top-0 bg-white/95 backdrop-blur-md border-b border-gray-100 z-50 transition-all">
+        <div class="max-w-7xl mx-auto px-6 py-5 flex justify-between items-center">
+            
+            <!-- Logo Corporativo -->
+            <div class="cursor-pointer" onclick="switchTab('inicio')">
+                <span class="font-extrabold text-2xl text-brand-navy tracking-tight">MARCOS<span class="text-brand-gold">.</span> CEO</span>
+            </div>
+
+            <!-- Navegación Desktop -->
+            <div class="hidden md:flex gap-8 items-center text-gray-500 text-sm font-medium">
+                <button onclick="switchTab('inicio')" class="nav-link active hover:text-brand-navy transition-colors" data-target="inicio">The Framework</button>
+                <button onclick="switchTab('academia')" class="nav-link hover:text-brand-navy transition-colors" data-target="academia">Store</button>
+                <button onclick="switchTab('panel')" class="nav-link hover:text-brand-navy transition-colors flex items-center gap-2" data-target="panel"><i class="fa-solid fa-lock text-xs"></i> Client Portal</button>
+            </div>
+
+            <!-- Botón Cualificación Desktop -->
+            <button onclick="switchTab('cualificacion')" class="hidden md:block bg-brand-navy hover:bg-brand-navyLight text-white px-6 py-2.5 rounded-md text-sm font-semibold transition-all shadow-md">
+                Aplicar al 1-a-1
+            </button>
+
+            <!-- Botón Hamburguesa Móvil -->
+            <button id="mobile-menu-btn" class="md:hidden text-brand-navy hover:text-brand-gold focus:outline-none transition-colors">
+                <i class="fa-solid fa-bars text-2xl"></i>
+            </button>
+
+        </div>
+
+        <!-- Menú Móvil Desplegable -->
+        <div id="mobile-menu" class="hidden md:hidden bg-brand-navy text-white absolute w-full left-0 top-full shadow-2xl z-50 border-t border-brand-navyLight">
+            <div class="flex flex-col p-6 space-y-2">
+                <button onclick="switchTab('inicio'); closeMobileMenu()" class="text-left font-semibold text-lg py-3 border-b border-brand-navyLight">The Framework</button>
+                <button onclick="switchTab('academia'); closeMobileMenu()" class="text-left font-semibold text-lg py-3 border-b border-brand-navyLight">Store & Resources</button>
+                <button onclick="switchTab('panel'); closeMobileMenu()" class="text-left font-semibold text-lg py-3 border-b border-brand-navyLight flex items-center gap-2"><i class="fa-solid fa-lock text-xs text-brand-gold"></i> Client Portal</button>
+                <button onclick="switchTab('cualificacion'); closeMobileMenu()" class="bg-brand-gold text-white text-center py-4 rounded-md font-bold mt-4 shadow-md uppercase tracking-wider text-sm">
+                    Aplicar al Programa
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow">
+
+        <!-- ========================================== -->
+        <!-- PESTAÑA: INICIO (Autoridad y VSL)          -->
+        <!-- ========================================== -->
+        <div id="inicio" class="tab-content active">
+            
+            <!-- HERO SECTION -->
+            <header class="bg-brand-pearl px-6 py-20 lg:py-32 border-b border-gray-200">
+                <div class="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-16">
+                    
+                    <div class="lg:w-1/2 text-center lg:text-left z-10">
+                        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-brand-navy/5 border border-brand-navy/10 text-brand-navy text-xs font-bold uppercase tracking-widest mb-6">
+                            <span class="w-2 h-2 rounded-full bg-brand-gold"></span> Para dueños de agencias B2B
+                        </div>
+                        <h1 class="text-4xl md:text-5xl lg:text-6xl text-brand-navy leading-[1.1] mb-6 font-extrabold tracking-tight">
+                            Escala tu agencia a <span class="text-brand-gold border-b-4 border-brand-goldLight">10k/mes</span> sin trabajar fines de semana.
+                        </h1>
+                        <p class="text-gray-600 text-lg font-medium mb-10 max-w-xl mx-auto lg:mx-0 leading-relaxed">
+                            El sistema predecible de 3 pasos que utilizamos para instalar sistemas de adquisición de clientes automatizados y estructuras operativas delegables.
+                        </p>
+                        <div class="flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start">
+                            <button onclick="switchTab('cualificacion')" class="w-full sm:w-auto bg-brand-navy hover:bg-brand-navyLight text-white px-8 py-4 rounded-md font-bold transition-all shadow-lg text-sm uppercase tracking-wider">
+                                Agendar Auditoría Gratuita
+                            </button>
+                            <p class="text-xs text-gray-400 font-medium"><i class="fa-solid fa-bolt text-brand-gold mr-1"></i> Solo 3 plazas este mes</p>
+                        </div>
+                    </div>
+
+                    <!-- VSL (Video Sales Letter) Simulado -->
+                    <div class="lg:w-1/2 w-full">
+                        <div class="relative w-full aspect-video bg-brand-black rounded-md shadow-premium border border-gray-800 overflow-hidden flex items-center justify-center group cursor-pointer">
+                            <img src="https://images.unsplash.com/photo-1556761175-5973dc0f32d7?auto=format&fit=crop&w=1000&q=80" alt="Consultoría Empresarial" class="absolute inset-0 w-full h-full object-cover opacity-40 mix-blend-luminosity group-hover:opacity-50 transition-opacity duration-500">
+                            <div class="absolute inset-0 bg-gradient-to-t from-brand-black via-transparent to-transparent"></div>
+                            
+                            <div class="relative z-10 w-20 h-20 bg-brand-gold rounded-full flex items-center justify-center text-white text-2xl play-btn-glow transform group-hover:scale-110 transition-transform duration-300">
+                                <i class="fa-solid fa-play ml-1"></i>
+                            </div>
+                            
+                            <div class="absolute bottom-4 left-6 right-6 flex justify-between items-end text-white/80">
+                                <div>
+                                    <p class="font-bold text-sm text-white">Masterclass: El Método 10K</p>
+                                    <p class="text-xs">Haz clic para reproducir (12:45)</p>
+                                </div>
+                                <i class="fa-solid fa-volume-high text-sm"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </header>
+
+            <!-- AUTHORITY BAR -->
+            <div class="bg-brand-navy py-6 border-y border-brand-navyLight">
+                <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-center gap-6 md:gap-12">
+                    <p class="text-xs text-gray-400 uppercase tracking-[0.2em] font-bold">As seen in:</p>
+                    <div class="flex items-center gap-8 text-white/50 font-serif text-xl md:text-2xl font-bold">
+                        <span class="hover:text-white transition-colors cursor-default">Forbes</span>
+                        <span class="hover:text-white transition-colors cursor-default">Entrepreneur</span>
+                        <span class="hover:text-white transition-colors cursor-default">Business Insider</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FRAMEWORK DE 3 PASOS -->
+            <section class="py-24 px-6 bg-white">
+                <div class="max-w-6xl mx-auto">
+                    <div class="text-center mb-16">
+                        <h2 class="text-3xl md:text-4xl text-brand-navy font-extrabold mb-4 tracking-tight">La ingeniería detrás del crecimiento</h2>
+                        <p class="text-gray-500 font-medium">Dejamos de adivinar y empezamos a medir. Este es nuestro framework.</p>
+                    </div>
+
+                    <div class="grid md:grid-cols-3 gap-8 relative">
+                        <!-- Conector visual desktop -->
+                        <div class="hidden md:block absolute top-12 left-1/6 right-1/6 h-px bg-gray-200 z-0 border-t border-dashed border-gray-300"></div>
+
+                        <!-- Step 1 -->
+                        <div class="relative z-10 bg-brand-pearl p-8 rounded-md border border-gray-100 shadow-sm text-center">
+                            <div class="w-16 h-16 bg-brand-navy text-white rounded-md flex items-center justify-center mx-auto mb-6 shadow-md text-xl font-bold">1</div>
+                            <h3 class="text-lg font-bold text-brand-navy mb-3">Atracción Predictiva</h3>
+                            <p class="text-sm text-gray-600 leading-relaxed">Instalamos embudos de prospección Outbound (Cold Email/LinkedIn) e Inbound para generar de 10 a 20 llamadas cualificadas al mes de forma sistemática.</p>
+                        </div>
+
+                        <!-- Step 2 -->
+                        <div class="relative z-10 bg-brand-pearl p-8 rounded-md border border-gray-100 shadow-sm text-center">
+                            <div class="w-16 h-16 bg-brand-navy text-white rounded-md flex items-center justify-center mx-auto mb-6 shadow-md text-xl font-bold">2</div>
+                            <h3 class="text-lg font-bold text-brand-navy mb-3">Conversión High-Ticket</h3>
+                            <p class="text-sm text-gray-600 leading-relaxed">Estructuramos tu oferta para poder cobrar un mínimo de 1.500€. Implementamos scripts de venta consultiva para cerrar al 25% de las reuniones sin sonar desesperado.</p>
+                        </div>
+
+                        <!-- Step 3 -->
+                        <div class="relative z-10 bg-brand-pearl p-8 rounded-md border border-gray-100 shadow-sm text-center">
+                            <div class="w-16 h-16 bg-brand-navy text-white rounded-md flex items-center justify-center mx-auto mb-6 shadow-md text-xl font-bold">3</div>
+                            <h3 class="text-lg font-bold text-brand-navy mb-3">Entrega Escalable</h3>
+                            <p class="text-sm text-gray-600 leading-relaxed">Transicionamos tu modelo de "Hecho por ti" a un formato consultivo grupal, eliminando los cuellos de botella de entrega para que puedas atender a 50 clientes a la vez.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- INTERACCIÓN: CALCULADORA DE ROI -->
+            <section class="py-24 px-6 bg-brand-navy text-white relative overflow-hidden">
+                <!-- Decoración fondo -->
+                <div class="absolute top-0 right-0 w-[800px] h-[800px] bg-brand-gold rounded-full filter blur-[150px] opacity-10 pointer-events-none translate-x-1/2 -translate-y-1/4"></div>
+
+                <div class="max-w-4xl mx-auto relative z-10">
+                    <div class="text-center mb-12">
+                        <i class="fa-solid fa-calculator text-4xl text-brand-gold mb-6"></i>
+                        <h2 class="text-3xl md:text-4xl font-extrabold mb-4 tracking-tight">Calcula el coste de no escalar</h2>
+                        <p class="text-gray-400 font-medium">Juega con el deslizador para ver tu potencial real si implementamos nuestro framework hoy mismo.</p>
+                    </div>
+
+                    <div class="bg-brand-navyLight border border-gray-700 p-8 md:p-12 rounded-md shadow-2xl">
+                        <label class="block text-sm font-bold text-gray-300 uppercase tracking-widest mb-6">Tu facturación mensual actual: <span id="current-rev-display" class="text-brand-gold text-xl ml-2">2.000 €</span></label>
+                        
+                        <input type="range" min="1000" max="20000" step="500" value="2000" id="roi-slider" class="mb-10">
+
+                        <div class="bg-brand-navy p-6 rounded-md border border-brand-gold/30 text-center">
+                            <p class="text-sm text-gray-400 mb-2 font-medium">Proyección tras 90 días con el sistema implementado:</p>
+                            <div class="text-4xl md:text-5xl font-extrabold text-white mb-2" id="projected-rev-display">
+                                6.000 € <span class="text-lg text-gray-500 font-medium">/ mes</span>
+                            </div>
+                            <p class="text-brand-gold text-xs font-bold uppercase tracking-widest">+ Crecimiento x3 garantizado por contrato</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PRUEBA SOCIAL CUANTIFICABLE -->
+            <section class="py-24 px-6 bg-brand-pearl border-t border-gray-200">
+                <div class="max-w-6xl mx-auto">
+                    <div class="text-center mb-16">
+                        <h2 class="text-3xl md:text-4xl text-brand-navy font-extrabold mb-4 tracking-tight">Resultados, no promesas.</h2>
+                        <p class="text-gray-500 font-medium">Casos de estudio de agencias que ya han cruzado la barrera de los 10k.</p>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 gap-8">
+                        <div class="bg-white p-8 rounded-md shadow-sm border border-gray-100 border-l-4 border-l-brand-gold">
+                            <p class="text-4xl font-extrabold text-brand-navy mb-2">De 1.500€ a 7.200€</p>
+                            <p class="text-xs uppercase tracking-widest text-brand-gold font-bold mb-6">En solo 45 días</p>
+                            <p class="text-gray-600 text-sm leading-relaxed mb-6 font-medium italic">"Estaba cobrando 300€ por llevar redes sociales. Marcos me obligó a empaquetar una oferta High-Ticket a 1.500€. Cerramos 4 clientes el primer mes usando sus scripts de LinkedIn."</p>
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center text-gray-500 font-bold">D</div>
+                                <div>
+                                    <p class="text-sm font-bold text-brand-navy">David R.</p>
+                                    <p class="text-xs text-gray-500">Agencia de Performance Marketing</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white p-8 rounded-md shadow-sm border border-gray-100 border-l-4 border-l-brand-gold">
+                            <p class="text-4xl font-extrabold text-brand-navy mb-2">Reducción del 60%</p>
+                            <p class="text-xs uppercase tracking-widest text-brand-gold font-bold mb-6">En horas de trabajo operativo</p>
+                            <p class="text-gray-600 text-sm leading-relaxed mb-6 font-medium italic">"Facturaba 8k al mes pero trabajaba 14 horas al día. Implementamos el modelo grupal de entrega de Marcos y ahora atiendo a 15 clientes dedicando solo 3 horas a la semana a consultoría."</p>
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center text-gray-500 font-bold">L</div>
+                                <div>
+                                    <p class="text-sm font-bold text-brand-navy">Laura M.</p>
+                                    <p class="text-xs text-gray-500">Consultora de E-commerce</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section class="py-24 px-6 bg-brand-navy border-t border-brand-gold/20 text-center">
+                <div class="max-w-3xl mx-auto">
+                    <span class="text-brand-gold font-bold text-xs uppercase tracking-widest mb-4 block">El siguiente paso</span>
+                    <h2 class="text-3xl md:text-4xl text-white font-extrabold mb-6 tracking-tight">¿Listo para dejar de ser un autoempleado?</h2>
+                    <p class="text-gray-400 font-medium mb-10 leading-relaxed">Únete al 1% de dueños de agencia que dominan sus operaciones y escalan sin quemarse. Aplica hoy y descubre si cumples con los requisitos de nuestro sistema.</p>
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                        <button onclick="switchTab('cualificacion')" class="bg-brand-gold hover:bg-brand-goldLight text-white px-8 py-4 rounded-md font-bold transition-all shadow-lg text-sm uppercase tracking-wider">
+                            Aplicar a la Mentoría
+                        </button>
+                        <button onclick="switchTab('academia')" class="bg-transparent border-2 border-gray-600 hover:border-white text-white px-8 py-4 rounded-md font-bold transition-all text-sm uppercase tracking-wider">
+                            Ver Casos de Estudio
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+
+        <!-- ========================================== -->
+        <!-- PESTAÑA: ACADEMIA / TIENDA                 -->
+        <!-- ========================================== -->
+        <div id="academia" class="tab-content py-20 px-6 bg-white">
+            <div class="max-w-7xl mx-auto">
+                
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl text-brand-navy font-extrabold mb-4 tracking-tight">Assets & Formaciones</h2>
+                    <p class="text-gray-500 font-medium">Recursos tácticos para solucionar cuellos de botella específicos.</p>
+                </div>
+
+                <!-- INTERACCIÓN: FILTRO DINÁMICO -->
+                <div class="flex flex-wrap justify-center gap-3 mb-16">
+                    <button class="filter-btn active px-5 py-2 rounded-md border border-gray-200 text-sm font-bold transition-all text-gray-600 hover:border-brand-navy" data-filter="all" onclick="filterProducts(this, 'all')">Todos</button>
+                    <button class="filter-btn px-5 py-2 rounded-md border border-gray-200 text-sm font-bold transition-all text-gray-600 hover:border-brand-navy" data-filter="ventas" onclick="filterProducts(this, 'ventas')">Ventas B2B</button>
+                    <button class="filter-btn px-5 py-2 rounded-md border border-gray-200 text-sm font-bold transition-all text-gray-600 hover:border-brand-navy" data-filter="operaciones" onclick="filterProducts(this, 'operaciones')">Operaciones</button>
+                    <button class="filter-btn px-5 py-2 rounded-md border border-gray-200 text-sm font-bold transition-all text-gray-600 hover:border-brand-navy" data-filter="mentalidad" onclick="filterProducts(this, 'mentalidad')">Mentalidad CEO</button>
+                </div>
+
+                <!-- GRID DE PRODUCTOS -->
+                <div class="grid md:grid-cols-3 gap-8" id="product-grid">
+                    
+                    <!-- Producto 1 -->
+                    <div class="product-card border border-gray-200 rounded-md overflow-hidden flex flex-col hover:shadow-premium transition-all bg-brand-pearl" data-category="ventas">
+                        <div class="h-48 bg-brand-navy p-6 flex flex-col justify-center items-center text-center relative overflow-hidden">
+                            <i class="fa-solid fa-phone-volume text-5xl text-brand-gold/30 absolute right-4 bottom-4"></i>
+                            <h3 class="text-white font-extrabold text-xl relative z-10">Script de Ventas<br>High-Ticket</h3>
+                            <span class="bg-brand-gold text-white text-[10px] font-bold px-2 py-1 rounded mt-3 uppercase tracking-widest relative z-10">Plantilla Notion</span>
+                        </div>
+                        <div class="p-6 flex flex-col flex-grow">
+                            <p class="text-sm text-gray-600 mb-6 font-medium flex-grow">El guion exacto palabra por palabra que utilizamos para cerrar servicios de +3.000€ gestionando objeciones de precio de forma elegante.</p>
+                            <div class="flex justify-between items-center border-t border-gray-200 pt-4">
+                                <span class="font-extrabold text-xl text-brand-navy">47 €</span>
+                                <button class="text-sm font-bold text-brand-gold hover:text-brand-navy transition-colors">Comprar ahora <i class="fa-solid fa-arrow-right ml-1"></i></button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Producto 2 -->
+                    <div class="product-card border border-gray-200 rounded-md overflow-hidden flex flex-col hover:shadow-premium transition-all bg-brand-pearl" data-category="operaciones">
+                        <div class="h-48 bg-brand-navy p-6 flex flex-col justify-center items-center text-center relative overflow-hidden">
+                            <i class="fa-solid fa-gears text-5xl text-brand-gold/30 absolute right-4 bottom-4"></i>
+                            <h3 class="text-white font-extrabold text-xl relative z-10">Sistema de<br>Delivery Grupal</h3>
+                            <span class="bg-brand-gold text-white text-[10px] font-bold px-2 py-1 rounded mt-3 uppercase tracking-widest relative z-10">Masterclass 2h</span>
+                        </div>
+                        <div class="p-6 flex flex-col flex-grow">
+                            <p class="text-sm text-gray-600 mb-6 font-medium flex-grow">Aprende a desvincular tu tiempo de la entrega del servicio estructurando un modelo de consultoría híbrida escalable.</p>
+                            <div class="flex justify-between items-center border-t border-gray-200 pt-4">
+                                <span class="font-extrabold text-xl text-brand-navy">97 €</span>
+                                <button class="text-sm font-bold text-brand-gold hover:text-brand-navy transition-colors">Comprar ahora <i class="fa-solid fa-arrow-right ml-1"></i></button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Producto 3 -->
+                    <div class="product-card border border-gray-200 rounded-md overflow-hidden flex flex-col hover:shadow-premium transition-all bg-brand-pearl" data-category="mentalidad">
+                        <div class="h-48 bg-brand-navy p-6 flex flex-col justify-center items-center text-center relative overflow-hidden">
+                            <i class="fa-solid fa-chess-knight text-5xl text-brand-gold/30 absolute right-4 bottom-4"></i>
+                            <h3 class="text-white font-extrabold text-xl relative z-10">Gestión de Tiempo<br>para CEOs</h3>
+                            <span class="bg-brand-gold text-white text-[10px] font-bold px-2 py-1 rounded mt-3 uppercase tracking-widest relative z-10">Audio Training</span>
+                        </div>
+                        <div class="p-6 flex flex-col flex-grow">
+                            <p class="text-sm text-gray-600 mb-6 font-medium flex-grow">Protocolos de delegación y estructuración de agenda para dejar de ser un empleado en tu propio negocio y empezar a dirigir.</p>
+                            <div class="flex justify-between items-center border-t border-gray-200 pt-4">
+                                <span class="font-extrabold text-xl text-brand-navy">27 €</span>
+                                <button class="text-sm font-bold text-brand-gold hover:text-brand-navy transition-colors">Comprar ahora <i class="fa-solid fa-arrow-right ml-1"></i></button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+
+        <!-- ========================================== -->
+        <!-- PESTAÑA: CUALIFICACIÓN (El Filtro High-Ticket) -->
+        <!-- ========================================== -->
+        <div id="cualificacion" class="tab-content py-20 px-6 bg-brand-pearl min-h-[80vh]">
+            <div class="max-w-6xl mx-auto">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl text-brand-navy font-extrabold tracking-tight mb-4">Aplicación al Programa 1-a-1</h2>
+                    <p class="text-gray-500 font-medium">Revisamos cada aplicación de forma manual. Por favor, sé 100% transparente.</p>
+                </div>
+
+                <div class="grid md:grid-cols-5 gap-12 items-start">
+                    <div class="md:col-span-2 bg-white p-8 rounded-md border border-gray-200 shadow-sm">
+                        <h3 class="font-bold text-brand-navy text-lg mb-6 border-b border-gray-100 pb-4">Criterios de Aceptación:</h3>
+                        <ul class="space-y-5 text-sm text-gray-600 font-medium">
+                            <li class="flex gap-3"><i class="fa-solid fa-check text-brand-gold mt-1"></i> <span>Aceptamos un máximo de <strong>5 clientes</strong> al mes.</span></li>
+                            <li class="flex gap-3"><i class="fa-solid fa-check text-brand-gold mt-1"></i> <span>Debes tener un modelo B2B ya validado. No trabajamos con ideas desde cero.</span></li>
+                            <li class="flex gap-3"><i class="fa-solid fa-check text-brand-gold mt-1"></i> <span>El sistema exige al menos 3 horas semanales de implementación.</span></li>
+                        </ul>
+                    </div>
+
+                    <div class="md:col-span-3">
+                        <div class="bg-white p-8 md:p-12 rounded-md shadow-premium border border-gray-200" id="qualify-form">
+                            <h3 class="text-xl font-bold text-brand-navy mb-6">Nivel de compromiso actual</h3>
+                            <p class="text-gray-500 text-sm font-medium mb-8">Selecciona tu capacidad de inversión para herramientas y delegación operativa.</p>
+                            
+                            <div class="grid sm:grid-cols-2 gap-4">
+                                <button onclick="handleQualify('low')" class="border-2 border-gray-200 hover:border-brand-navy hover:bg-brand-pearl text-brand-navy font-bold py-6 rounded-md transition-all">
+                                    Menos de 500 € / mes
+                                </button>
+                                <button onclick="handleQualify('high')" class="border-2 border-gray-200 hover:border-brand-gold hover:bg-brand-gold/5 text-brand-navy font-bold py-6 rounded-md transition-all relative overflow-hidden group">
+                                    <span class="relative z-10">Más de 2.000 € / mes</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div id="qualify-reject" class="hidden bg-white p-8 md:p-12 rounded-md shadow-premium border border-gray-200 text-center transition-all">
+                            <i class="fa-solid fa-graduation-cap text-4xl text-gray-400 mb-4"></i>
+                            <h3 class="text-2xl font-bold text-brand-navy mb-4">Te recomendamos empezar por aquí</h3>
+                            <p class="text-gray-600 font-medium mb-8">El programa 1-a-1 requiere mayor músculo financiero. Dirígete a la Store para implementar nuestros sistemas tácticos y escalar tu facturación actual.</p>
+                            <button onclick="switchTab('academia')" class="bg-brand-navy hover:bg-brand-navyLight text-white px-8 py-3 rounded-md font-bold transition-all shadow-md">
+                                Ir a la Store
+                            </button>
+                        </div>
+
+                        <div id="qualify-accept" class="hidden bg-white p-8 md:p-12 rounded-md shadow-premium border-2 border-brand-gold/30 text-center transition-all">
+                            <i class="fa-solid fa-calendar-check text-4xl text-brand-gold mb-4"></i>
+                            <h3 class="text-2xl font-bold text-brand-navy mb-2">¡Perfil Pre-Cualificado!</h3>
+                            <p class="text-gray-500 font-medium mb-8 text-sm">Reserva tu Sesión de Auditoría Estratégica (45 min) a continuación.</p>
+                            <div class="grid grid-cols-2 gap-3">
+                                <button class="bg-brand-pearl border border-brand-gold/50 text-brand-navy hover:bg-brand-gold hover:text-white py-3 rounded-md font-bold text-sm transition-colors">Mar, 10:00 AM</button>
+                                <button class="bg-brand-pearl border border-brand-gold/50 text-brand-navy hover:bg-brand-gold hover:text-white py-3 rounded-md font-bold text-sm transition-colors">Jue, 16:30 PM</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- ========================================== -->
+        <!-- PESTAÑA: PANEL VIP (Área del Cliente)      -->
+        <!-- ========================================== -->
+        <div id="panel" class="tab-content py-20 px-6 bg-brand-pearl min-h-[80vh]">
+            <div class="max-w-6xl mx-auto">
+                
+                <div class="mb-12">
+                    <h2 class="text-3xl font-extrabold text-brand-navy tracking-tight mb-2">Panel de Control de tu Escalabilidad</h2>
+                    <p class="text-gray-500 font-medium">Bienvenido a tu área privada. Documentación y próximos pasos.</p>
+                </div>
+
+                <!-- FILA 1: Progreso, Documentos y Consultoría (Grid 2/3 y 1/3) -->
+                <div class="grid lg:grid-cols-3 gap-8 mb-12">
+                    
+                    <!-- Columna Principal -->
+                    <div class="lg:col-span-2 space-y-8">
+                        
+                        <!-- INTERACCIÓN: Barra de Progreso Animada -->
+                        <div class="bg-white border border-gray-200 p-8 rounded-md shadow-sm">
+                            <div class="flex justify-between items-end mb-4">
+                                <div>
+                                    <h3 class="font-bold text-brand-navy text-lg mb-1">Progreso de Implementación</h3>
+                                    <p class="text-xs font-bold text-brand-gold uppercase tracking-wider">Fase 2 de 4 completada</p>
+                                </div>
+                                <span class="text-2xl font-extrabold text-brand-navy">50%</span>
+                            </div>
+                            
+                            <!-- Track de la barra -->
+                            <div class="w-full bg-gray-100 h-3 rounded-full overflow-hidden">
+                                <div id="vip-progress-bar" class="bg-brand-navy h-full w-0 relative">
+                                    <div class="absolute inset-0 bg-white/20" style="background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent); background-size: 1rem 1rem;"></div>
+                                </div>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-4 font-medium">Siguiente hito: Automatización de prospección en LinkedIn.</p>
+                        </div>
+
+                        <!-- Recursos VIP -->
+                        <div class="bg-white border border-gray-200 p-8 rounded-md shadow-sm">
+                            <h3 class="font-bold text-brand-navy text-lg mb-6"><i class="fa-solid fa-folder-open text-brand-gold mr-2"></i> Documentación Estratégica</h3>
+                            <div class="space-y-3">
+                                <a href="#" class="flex items-center justify-between p-4 bg-gray-50 hover:bg-brand-pearl border border-gray-100 rounded-md transition-colors group">
+                                    <div class="flex items-center gap-4">
+                                        <i class="fa-brands fa-neos text-2xl text-black"></i>
+                                        <div>
+                                            <p class="font-bold text-sm text-brand-navy group-hover:text-brand-gold transition-colors">Workspace Operativo</p>
+                                            <p class="text-xs text-gray-500">Plantilla compartida de Notion</p>
+                                        </div>
+                                    </div>
+                                    <i class="fa-solid fa-arrow-up-right-from-square text-gray-400 text-xs"></i>
+                                </a>
+                                
+                                <a href="#" class="flex items-center justify-between p-4 bg-gray-50 hover:bg-brand-pearl border border-gray-100 rounded-md transition-colors group">
+                                    <div class="flex items-center gap-4">
+                                        <i class="fa-regular fa-file-pdf text-2xl text-red-500"></i>
+                                        <div>
+                                            <p class="font-bold text-sm text-brand-navy group-hover:text-brand-gold transition-colors">Auditoría Inicial (PDF)</p>
+                                            <p class="text-xs text-gray-500">Resumen de cuellos de botella</p>
+                                        </div>
+                                    </div>
+                                    <i class="fa-solid fa-download text-gray-400 text-xs"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Columna Lateral -->
+                    <div class="space-y-8">
+                        <!-- Caja de Llamada -->
+                        <div class="bg-brand-navy text-white p-8 rounded-md shadow-premium border border-brand-navyLight text-center relative overflow-hidden h-full flex flex-col justify-center">
+                            <div class="absolute top-0 right-0 w-32 h-32 bg-brand-gold rounded-full filter blur-[50px] opacity-20 -z-0"></div>
+                            <div class="relative z-10">
+                                <div class="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-6 text-2xl">
+                                    <i class="fa-solid fa-users text-brand-gold"></i>
+                                </div>
+                                <h3 class="font-bold text-lg mb-2">Consultoría Grupal</h3>
+                                <p class="text-sm text-gray-400 mb-6">Revisión de embudos y resolución de objeciones de venta en directo.</p>
+                                <div class="bg-black/30 p-3 rounded-md mb-6 border border-white/10">
+                                    <p class="text-xs uppercase tracking-widest text-brand-gold font-bold mb-1">Próxima Sesión</p>
+                                    <p class="font-bold text-sm">Jueves, 18:00 h (CET)</p>
+                                </div>
+                                <button class="w-full bg-brand-gold hover:bg-brand-goldLight text-white font-bold py-3 rounded-md transition-all shadow-md text-sm uppercase tracking-wide">
+                                    Unirse por Zoom
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div> <!-- FIN FILA 1 -->
+
+                <!-- FILA 2: Métricas (Ancho completo) -->
+                <div class="mb-12">
+                    <h3 class="font-bold text-brand-navy text-lg mb-4 border-b border-gray-200 pb-2">Métricas de Crecimiento (MRR)</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                        <div class="bg-white border border-gray-200 p-6 rounded-md shadow-sm">
+                            <p class="text-sm text-gray-500 font-medium mb-1">Ingresos Recurrentes</p>
+                            <p class="text-3xl font-extrabold text-brand-navy">12.450 €</p>
+                            <p class="text-xs text-green-600 font-bold mt-2"><i class="fa-solid fa-arrow-trend-up"></i> +18% vs mes anterior</p>
+                        </div>
+                        <div class="bg-white border border-gray-200 p-6 rounded-md shadow-sm">
+                            <p class="text-sm text-gray-500 font-medium mb-1">Llamadas Agendadas</p>
+                            <p class="text-3xl font-extrabold text-brand-navy">24</p>
+                            <p class="text-xs text-brand-gold font-bold mt-2"><i class="fa-solid fa-bolt"></i> Récord del trimestre</p>
+                        </div>
+                        <div class="bg-white border border-gray-200 p-6 rounded-md shadow-sm">
+                            <p class="text-sm text-gray-500 font-medium mb-1">Tasa de Cierre</p>
+                            <p class="text-3xl font-extrabold text-brand-navy">28%</p>
+                            <p class="text-xs text-gray-400 font-bold mt-2"><i class="fa-solid fa-minus"></i> Estable</p>
+                        </div>
+                    </div>
+                </div> <!-- FIN FILA 2 -->
+
+                <!-- FILA 3: Checklist y Slack (Grid 2/3 y 1/3) -->
+                <div class="grid lg:grid-cols-3 gap-8">
+                    <!-- Checklist Operativo -->
+                    <div class="lg:col-span-2 bg-white border border-gray-200 rounded-md p-8 shadow-sm">
+                        <h3 class="font-bold text-brand-navy text-lg mb-6">Plan de Acción Semanal (Semana 3)</h3>
+                        <ul class="space-y-3">
+                            <li class="flex items-center gap-4 p-3 hover:bg-brand-pearl rounded-md cursor-pointer transition-colors border border-transparent hover:border-gray-100 group" onclick="toggleTask(this)">
+                                <div class="w-5 h-5 rounded border-2 border-gray-300 flex items-center justify-center text-white check-box transition-colors"><i class="fa-solid fa-check text-[10px] opacity-0 transition-opacity"></i></div>
+                                <span class="text-brand-navy font-medium task-text transition-all">Definir estructura de precios del nuevo servicio.</span>
+                            </li>
+                            <li class="flex items-center gap-4 p-3 hover:bg-brand-pearl rounded-md cursor-pointer transition-colors border border-transparent hover:border-gray-100 group" onclick="toggleTask(this)">
+                                <div class="w-5 h-5 rounded border-2 border-gray-300 flex items-center justify-center text-white check-box transition-colors"><i class="fa-solid fa-check text-[10px] opacity-0 transition-opacity"></i></div>
+                                <span class="text-brand-navy font-medium task-text transition-all">Lanzar campaña de Outbound en LinkedIn.</span>
+                            </li>
+                            <li class="flex items-center gap-4 p-3 hover:bg-brand-pearl rounded-md cursor-pointer transition-colors border border-transparent hover:border-gray-100 group" onclick="toggleTask(this)">
+                                <div class="w-5 h-5 rounded border-2 border-gray-300 flex items-center justify-center text-white check-box transition-colors"><i class="fa-solid fa-check text-[10px] opacity-0 transition-opacity"></i></div>
+                                <span class="text-brand-navy font-medium task-text transition-all">Revisar métricas de conversión en el VSL.</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Módulo Slack / Soporte -->
+                    <div class="lg:col-span-1 bg-white border border-gray-200 rounded-md p-8 shadow-sm flex flex-col">
+                        <h3 class="font-bold text-brand-navy text-lg mb-4"><i class="fa-brands fa-slack text-brand-gold mr-2"></i>Soporte Directo</h3>
+                        <p class="text-sm text-gray-500 mb-6 leading-relaxed">Tu canal privado de Slack está activo. Respondemos dudas operativas en menos de 12 horas.</p>
+                        
+                        <div class="bg-gray-50 p-4 rounded-md mb-6 border border-gray-100 flex-grow relative overflow-hidden">
+                            <div class="flex items-start gap-3 relative z-10">
+                                <div class="w-8 h-8 bg-brand-navy rounded-sm flex-shrink-0 flex items-center justify-center text-white text-xs font-bold shadow-sm">M</div>
+                                <div>
+                                    <p class="text-xs font-bold text-brand-navy mb-1">Marcos CEO <span class="text-gray-400 font-normal text-[10px] ml-1">10:45 AM</span></p>
+                                    <p class="text-xs text-gray-600 leading-relaxed">He revisado el VSL. Cambia el hook del minuto 1:20. Te he dejado todo el feedback detallado en Notion.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button onclick="alert('Abriendo aplicación de Slack...')" class="w-full bg-transparent border-2 border-brand-navy text-brand-navy hover:bg-brand-navy hover:text-white font-bold py-3 rounded-md transition-all text-sm uppercase tracking-wide">
+                            Ir al canal
+                        </button>
+                    </div>
+                </div> <!-- FIN FILA 3 -->
+
+            </div>
+        </div>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-brand-navy text-white py-12 mt-auto border-t border-brand-navyLight">
+        <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
+            <div>
+                <span class="font-extrabold text-xl tracking-tight">MARCOS<span class="text-brand-gold">.</span> CEO</span>
+                <p class="text-xs text-gray-500 font-medium mt-2">Consultoría estratégica B2B y Sistemas de Escalabilidad.</p>
+            </div>
+            
+            <div class="text-xs text-gray-400 font-medium text-center md:text-right">
+                <div class="flex gap-4 mb-2 justify-center md:justify-end">
+                    <a href="#" class="hover:text-brand-gold transition-colors">Términos y Condiciones</a>
+                    <span>|</span>
+                    <a href="#" class="hover:text-brand-gold transition-colors">Política de Privacidad</a>
+                </div>
+                <p>&copy; 2026 Marcos CEO. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- PARTE JS: LÓGICAS INTERACTIVAS -->
+    <script>
+        // 1. Lógica SPA (Pestañas y Reset visual)
+        function switchTab(tabId) {
+            // Ocultar pestañas y quitar estilos activos
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            
+            // Mostrar objetivo
+            const targetContent = document.getElementById(tabId);
+            if (targetContent) targetContent.classList.add('active');
+            
+            // Link activo
+            document.querySelectorAll(`.nav-link[data-target="${tabId}"]`).forEach(l => l.classList.add('active'));
+
+            // Scroll arriba
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            // Lógica Específica: Animación Barra de Progreso en Panel VIP
+            const progressBar = document.getElementById('vip-progress-bar');
+            if(tabId === 'panel') {
+                // Pequeño timeout para que la transición de CSS detecte el cambio tras mostrar el div
+                setTimeout(() => {
+                    progressBar.style.width = '50%';
+                }, 100);
+            } else {
+                // Resetear si salimos para que vuelva a animarse al entrar
+                progressBar.style.width = '0%';
+            }
+        }
+
+        // 2. Menú Hamburguesa
+        const btnMenu = document.getElementById('mobile-menu-btn');
+        const menuMovil = document.getElementById('mobile-menu');
+
+        btnMenu.addEventListener('click', () => {
+            menuMovil.classList.toggle('hidden');
+        });
+
+        function closeMobileMenu() {
+            if (!menuMovil.classList.contains('hidden')) {
+                menuMovil.classList.add('hidden');
+            }
+        }
+
+        // 3. Calculadora de ROI (Inicio)
+        const roiSlider = document.getElementById('roi-slider');
+        const currentRevDisplay = document.getElementById('current-rev-display');
+        const projectedRevDisplay = document.getElementById('projected-rev-display');
+
+        // Formateador de moneda estilo EU
+        const formatEuro = (num) => {
+            return new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(num);
+        };
+
+        // Event listener en tiempo real al arrastrar
+        roiSlider.addEventListener('input', function(e) {
+            const currentVal = parseInt(e.target.value);
+            const projectedVal = currentVal * 3; // Multiplicador x3
+
+            currentRevDisplay.textContent = formatEuro(currentVal);
+            // Actualizamos la proyección respetando el formato HTML con el "/ mes" pequeño
+            projectedRevDisplay.innerHTML = `${formatEuro(projectedVal)} <span class="text-lg text-gray-500 font-medium">/ mes</span>`;
+        });
+
+        // 4. Filtro Dinámico de Academia
+        function filterProducts(btnElement, category) {
+            // Estilos de botones
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            btnElement.classList.add('active');
+
+            // Lógica de filtrado
+            const cards = document.querySelectorAll('.product-card');
+            cards.forEach(card => {
+                if (category === 'all' || card.getAttribute('data-category') === category) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        // 5. Lógica Condicional del Formulario (Cualificación)
+        function handleQualify(answer) {
+            const form = document.getElementById('qualify-form');
+            const rejectBox = document.getElementById('qualify-reject');
+            const acceptBox = document.getElementById('qualify-accept');
+
+            // Ocultar la pregunta inicial
+            form.classList.add('hidden');
+
+            if (answer === 'low') {
+                // Mostrar el camino hacia Academia
+                rejectBox.classList.remove('hidden');
+            } else if (answer === 'high') {
+                // Mostrar el calendario VIP
+                acceptBox.classList.remove('hidden');
+            }
+        }
+
+        // 6. Lógica Checklist del Panel (JS)
+        function toggleTask(element) {
+            const checkBox = element.querySelector('.check-box');
+            const icon = element.querySelector('.fa-check');
+            const text = element.querySelector('.task-text');
+
+            // Hacemos el toggle de las clases de Tailwind
+            if(checkBox.classList.contains('bg-brand-gold')) {
+                checkBox.classList.remove('bg-brand-gold', 'border-brand-gold');
+                checkBox.classList.add('border-gray-300');
+                icon.classList.remove('opacity-100');
+                icon.classList.add('opacity-0');
+                text.classList.remove('line-through', 'text-gray-400');
+            } else {
+                checkBox.classList.remove('border-gray-300');
+                checkBox.classList.add('bg-brand-gold', 'border-brand-gold');
+                icon.classList.remove('opacity-0');
+                icon.classList.add('opacity-100');
+                text.classList.add('line-through', 'text-gray-400');
+            }
+        }
+    </script>
+</body>
+</html>
